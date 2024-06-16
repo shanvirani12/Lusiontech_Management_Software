@@ -1,0 +1,10 @@
+﻿@model List<Bid>
+
+@foreach (var bid in Model)
+{
+    <tr>
+        <td>@bid.SerialNumber</td>
+        <td>@bid.Date.ToString("yyyy-MM-dd HH:mm:ss")</td>
+        <td>@bid.Link</td>
+    </tr>
+}

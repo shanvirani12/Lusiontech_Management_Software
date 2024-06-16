@@ -1,0 +1,43 @@
+﻿@model List<Bid>
+
+<h2>Bids</h2>
+
+<form id="bidsForm">
+    <table id="bidsTable">
+        <thead>
+            <tr>
+                <th>Serial Number</th>
+                <th>Date</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            @Html.Partial("_BidsTable", Model)
+        </tbody>
+    </table>
+
+    <input type="text" id="linkInput" placeholder="Paste your link here" />
+    <button type="button" id="addBidButton">Add Bid</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#addBidButton').click(function () {
+            var link = $('#linkInput').val();
+            if (link) {
+                $.ajax({
+                    url: '@Url.Action("AddBid")',
+                    type: 'POST',
+                    data: { link: link },
+                    success: function (data) {
+                        $('#bidsTable tbody').html(data);
+                        $('#linkInput').val('');
+                    }
+                });
+            } else {
+                alert("Please enter a link.");
+            }
+        });
+    });
+</script>
