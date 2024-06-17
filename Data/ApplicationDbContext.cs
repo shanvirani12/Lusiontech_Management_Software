@@ -11,6 +11,13 @@ namespace Lusiontech_Management_Software.Data
              : base(options)
         {
         }
-       
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Additional configurations if needed
+        }
+
     }
 }

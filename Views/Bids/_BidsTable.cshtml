@@ -1,10 +1,10 @@
-﻿@model List<Bid>
+﻿@model List<Lusiontech_Management_Software.Models.Bid>
 
 @foreach (var bid in Model)
 {
     <tr>
         <td>@bid.SerialNumber</td>
-        <td>@bid.Date.ToString("yyyy-MM-dd HH:mm:ss")</td>
+        <td>@bid.Date.ToString("dd-MM-yyyy")</td>
         <td>@bid.Link</td>
     </tr>
 }

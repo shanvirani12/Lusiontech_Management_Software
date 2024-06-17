@@ -1,43 +1,94 @@
-﻿@model List<Bid>
+﻿@model List<Lusiontech_Management_Software.Models.Bid>
 
-<h2>Bids</h2>
+@{
+    ViewData["Title"] = "Bids";
+}
 
-<form id="bidsForm">
-    <table id="bidsTable">
-        <thead>
-            <tr>
-                <th>Serial Number</th>
-                <th>Date</th>
-                <th>Link</th>
-            </tr>
-        </thead>
-        <tbody>
-            @Html.Partial("_BidsTable", Model)
-        </tbody>
-    </table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bids</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col">
+                <h2>Bids for @User.Identity.Name</h2>
 
-    <input type="text" id="linkInput" placeholder="Paste your link here" />
-    <button type="button" id="addBidButton">Add Bid</button>
-</form>
+                <table id="bidsTable" class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Serial Number</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" style="width: 50%">Link</th> <!-- Adjust width as needed -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Render rows only if there are bids -->
+                        @if (Model.Any())
+                        {
+                            @Html.Partial("_BidsTable", Model)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#addBidButton').click(function () {
-            var link = $('#linkInput').val();
-            if (link) {
-                $.ajax({
-                    url: '@Url.Action("AddBid")',
-                    type: 'POST',
-                    data: { link: link },
-                    success: function (data) {
-                        $('#bidsTable tbody').html(data);
-                        $('#linkInput').val('');
-                    }
-                });
-            } else {
-                alert("Please enter a link.");
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <input type="text" id="linkInput" class="form-control" placeholder="Enter your link here">
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="addBidButton" class="btn btn-primary btn-block">Add Bid</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+EmmC+qG5gi6Z7uHRvzU8sVc5EliEufeOrb"
+            crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Function to add a new row to the table
+            function addNewRow(serialNumber, date, link) {
+                var newRow = `<tr>
+                            <td>${serialNumber}</td>
+                            <td>${date}</td>
+                            <td>${link}</td>
+                        </tr>`;
+                $('#bidsTable tbody').append(newRow);
+            }
+
+            // Event handler for clicking the Add Bid button
+            $('#addBidButton').click(function () {
+                var link = $('#linkInput').val().trim(); // Trim whitespace
+                if (link) {
+                    $.ajax({
+                        url: '@Url.Action("AddBid")',
+                        type: 'POST',
+                        data: { link: link },
+                        success: function (data) {
+                            $('#bidsTable tbody').html(data);
+                            $('#linkInput').val(''); // Clear input after adding bid
+                        }
+                    });
+                } else {
+                    alert("Please enter a link.");
+                }
+            });
+
+            // Initialize the table with no rows if there are no existing bids
+            if (!@Model.Any()) {
+                $('#bidsTable tbody').empty(); // Ensure table starts empty
             }
         });
-    });
-</script>
+    </script>
+</body>
+</html>
+
