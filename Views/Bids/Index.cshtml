@@ -1,9 +1,5 @@
 ﻿@model List<Lusiontech_Management_Software.Models.Bid>
 
-@{
-    ViewData["Title"] = "Bids";
-}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,21 +14,28 @@
     <div class="container mt-5">
         <div class="row">
             <div class="col">
-                <h2>Bids for @User.Identity.Name</h2>
+                <h2>Bids</h2>
 
                 <table id="bidsTable" class="table table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">Serial Number</th>
-                            <th scope="col">Date</th>
-                            <th scope="col" style="width: 50%">Link</th> <!-- Adjust width as needed -->
+                            <th scope="col" style="width: 10%">Serial Number</th>
+                            <th scope="col" style="width: 10%">Date</th>
+                            <th scope="col" style="width: 50%">Link</th>
+                            <th scope="col" style="width: 5%">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Render rows only if there are bids -->
-                        @if (Model.Any())
+                        @foreach (var bid in Model)
                         {
-                            @Html.Partial("_BidsTable", Model)
+                            <tr>
+                                <td>@bid.SerialNumber</td>
+                                <td>@bid.Date.ToString("MM-dd-yyyy")</td>
+                                <td>@bid.Link</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm edit-button" data-id="@bid.Id" data-link="@bid.Link">Edit</button>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -49,23 +52,14 @@
         </div>
     </div>
 
+    @Html.Partial("_EditModal")
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
             integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+EmmC+qG5gi6Z7uHRvzU8sVc5EliEufeOrb"
             crossorigin="anonymous"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            // Function to add a new row to the table
-            function addNewRow(serialNumber, date, link) {
-                var newRow = `<tr>
-                            <td>${serialNumber}</td>
-                            <td>${date}</td>
-                            <td>${link}</td>
-                        </tr>`;
-                $('#bidsTable tbody').append(newRow);
-            }
-
-            // Event handler for clicking the Add Bid button
             $('#addBidButton').click(function () {
                 var link = $('#linkInput').val().trim(); // Trim whitespace
                 if (link) {
@@ -83,12 +77,41 @@
                 }
             });
 
-            // Initialize the table with no rows if there are no existing bids
-            if (!@Model.Any()) {
-                $('#bidsTable tbody').empty(); // Ensure table starts empty
-            }
+            $(document).on('click', '.edit-button', function () {
+                var button = $(this); // Button that triggered the modal
+                var bidId = button.data('id'); // Extract info from data-* attributes
+                var link = button.data('link');
+
+                var modal = $('#editModal');
+                modal.find('#editBidId').val(bidId);
+                modal.find('#editLinkInput').val(link);
+
+                modal.modal('show');
+            });
+
+            $('#saveEditButton').click(function () {
+                var bidId = $('#editBidId').val();
+                var link = $('#editLinkInput').val().trim(); // Trim whitespace
+
+                if (link) {
+                    $.ajax({
+                        url: '@Url.Action("EditBid")',
+                        type: 'POST',
+                        data: { id: bidId, link: link },
+                        success: function (data) {
+                            $('#bidsTable tbody').html(data);
+                            $('#editModal').modal('hide');
+                        }
+                    });
+                } else {
+                    alert("Please enter a link.");
+                }
+            });
+
+            $('#closeButton').click(function () {
+                $('#editModal').modal('hide');
+            });
         });
     </script>
 </body>
 </html>
-

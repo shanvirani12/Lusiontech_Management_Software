@@ -4,7 +4,10 @@
 {
     <tr>
         <td>@bid.SerialNumber</td>
-        <td>@bid.Date.ToString("dd-MM-yyyy")</td>
+        <td>@bid.Date</td>
         <td>@bid.Link</td>
+        <td>
+            <button class="btn btn-primary btn-sm edit-button" data-id="@bid.Id" data-link="@bid.Link">Edit</button>
+        </td>
     </tr>
 }

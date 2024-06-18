@@ -51,12 +51,7 @@ namespace Lusiontech_Management_Software.Controllers
                 Bid todayTable = _context.Bids.FirstOrDefault(t => t.TableDate == today);
 
                 // If no table exists for today, create a new one
-                if (todayTable == null)
-                {
-                    todayTable = new Bid { TableDate = today };
-                    _context.Bids.Add(todayTable);
-                    _context.SaveChanges();
-                }
+                
 
                 if (string.IsNullOrEmpty(link))
                 {
@@ -90,6 +85,31 @@ namespace Lusiontech_Management_Software.Controllers
 
             // If link is empty or null, return empty partial view
             return PartialView("_BidsTable", new List<Bid>());
+        }
+
+        [HttpPost]
+        public IActionResult EditBid(int id, string link)
+        {
+            if (!string.IsNullOrWhiteSpace(link))
+            {
+                Bid bid = _context.Bids.FirstOrDefault(b => b.Id == id);
+                if (bid != null)
+                {
+                    bid.Link = link;
+                    _context.SaveChanges();
+
+                    DateTime today = DateTime.Today;
+                    string userId = _userManager.GetUserId(User);
+
+                    List<Bid> bids = _context.Bids
+                        .Where(b => b.TableDate == today && b.UserId == userId)
+                        .ToList();
+
+                    return PartialView("_BidsTable", bids);
+                }
+            }
+
+            return BadRequest("Invalid data.");
         }
     }
 }
