@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,12 @@ builder.Services.AddControllersWithViews();
 //Add Authentication
 builder.Services.AddAuthentication()
     .AddBearerToken(IdentityConstants.BearerScheme);
+
+builder.Services.AddSession(options =>
+{
+    // Set session timeout
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust as needed
+});
 
 //Add Authorization
 builder.Services.AddAuthorizationBuilder();
@@ -48,10 +56,15 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Bids}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "Accounts",
+    pattern: "{controller=Accounts}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 app.Run();

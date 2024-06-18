@@ -1,2 +1,2 @@
-dotnet ef migrations add "Initial-migration"
+dotnet ef migrations add "AddAccountToBid"
 dotnet ef database update

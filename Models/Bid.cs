@@ -20,5 +20,10 @@ namespace Lusiontech_Management_Software.Models
         // Foreign key for relationship with Employee
         public string UserId { get; set; }
         public Employee User { get; set; }
+
+        [Required]
+        public int AccountId { get; set; }
+        [ForeignKey("AccountId")]
+        public virtual Account Account { get; set; }
     }
 }

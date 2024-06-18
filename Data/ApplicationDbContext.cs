@@ -7,6 +7,7 @@ namespace Lusiontech_Management_Software.Data
     public class ApplicationDbContext : IdentityDbContext<Employee>
     {
         public DbSet<Bid> Bids { get; set; }
+        public DbSet<Account> Accounts { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
              : base(options)
         {
