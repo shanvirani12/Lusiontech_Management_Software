@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Lusiontech_Management_Software.Controllers
 {
-    [Authorize] // Restrict access to authenticated users only
+    [Authorize(Roles = "Admin")] // Restrict access to authenticated users only
     public class BidsController : Controller
     {
         private readonly ApplicationDbContext _context;
