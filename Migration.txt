@@ -1,2 +1,2 @@
-dotnet ef migrations add "AddAccountToBid"
+dotnet ef migrations add "AddProjectsFeature"
 dotnet ef database update

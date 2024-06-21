@@ -28,7 +28,7 @@ builder.Services.AddAuthorizationBuilder();
 
 //Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("OfficeConnection")));
 
 builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
@@ -62,11 +62,15 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Bids}/{action=Index}/{id?}");
+    pattern: "{controller=Projects}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "Accounts",
     pattern: "{controller=Accounts}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "Projects",
+    pattern: "{controller=Projects}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 
