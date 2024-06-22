@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Lusiontech_Management_Software.Data;
 using Lusiontech_Management_Software.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Lusiontech_Management_Software.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,11 +21,36 @@ namespace Lusiontech_Management_Software.Controllers
             _context = context;
         }
 
+
         // GET: Projects
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? accountId, string userEmail)
         {
-            var applicationDbContext = _context.Projects.Include(p => p.Bid);
-            return View(await applicationDbContext.ToListAsync());
+            var projectsQuery = _context.Projects
+                .Include(p => p.Bid)
+                    .ThenInclude(b => b.Account)
+                .Include(p => p.Bid)
+                    .ThenInclude(b => b.User)
+                .AsQueryable();
+
+            if (accountId.HasValue)
+            {
+                projectsQuery = projectsQuery.Where(p => p.Bid.AccountId == accountId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(userEmail))
+            {
+                projectsQuery = projectsQuery.Where(p => p.Bid.User.Email == userEmail);
+            }
+
+            var projects = await projectsQuery.ToListAsync();
+
+            var accounts = await _context.Accounts.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+
+            ViewData["Accounts"] = new SelectList(accounts, "Id", "Name");
+            ViewData["Users"] = new SelectList(users, "Email", "Email");
+
+            return View(projects);
         }
 
         // GET: Projects/SearchBids
